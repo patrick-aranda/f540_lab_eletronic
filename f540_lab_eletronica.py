@@ -12,14 +12,32 @@ import matplotlib.pyplot as plt
 
 # Functions.
 def prep_data_fourier():
-    print("hello")
-    #hgffjj
+    columns = [[],[],[]]
+    with open("ch1_fourier_dados.csv", "r") as file:
+        csvreader = csv.reader(file)
+        global header1
+        header1 = next(csvreader)
+        next(csvreader)
+        for row in csvreader:
+            columns[0].append(float(row[0]))
+            columns[1].append(float(row[1]))
+    with open("ch2_fourier_dados.csv", "r") as file:
+        csvreader = csv.reader(file)
+        next(csvreader)
+        next(csvreader)
+        for row in csvreader:
+            columns[2].append(float(row[1]))
+    global frequency, amplitude_1, amplitude_2
+    frequency = columns[0]
+    amplitude_1 = columns[1]
+    amplitude_2 = columns[2]
+
 
 def prep_data_T_dB():
     columns = [[],[],[],[],[],[]]
     aux = []
     with open(filename, "r") as file:
-        csvreader = csv.reader(file)
+        csvreader = csv.reader(file) # Lê o arquivo, linha por linha, e retorna uma lista.
         global header
         header = next(csvreader) # next()method returns me the next record from my variable. Since is the first time used, it returns the first record (first line) and skip to next one.
         for row in csvreader: # "row" poderia ser qlq coisa, é apenas o índice da linha.
@@ -42,12 +60,14 @@ def prep_data_T_dB():
     for l in range(len(phase_Ch21_degree)):
         phase_list.append(phase_error)
 
+
 def media_T_dB(): # Desnecessária neste programa.
     media = 0
     for j in range(len(Trans_dB)):
         media = media + Trans_dB[j]
     media = media/len(Trans_dB)
     return media
+
 
 def desvio_padrao_T_dB(): # Desnecessária neste programa.
     aux = 0
@@ -56,6 +76,7 @@ def desvio_padrao_T_dB(): # Desnecessária neste programa.
         aux = aux + (Trans_dB[k] - media)**2
     desvio_padrao = (aux/(len(Trans_dB)-1))**(1/2)
     return desvio_padrao
+
 
 def media_error(): # Desnecessária neste programa.
     desvio_padrao = desvio_padrao_T_dB()
@@ -71,12 +92,31 @@ if filename in ("ch1_fourier_dados.csv", "ch2_fourier_dados.csv"):
     graphic_type = input("What's the desired graphic: ch1, ch2 or comparative?")
     prep_data_fourier()
     if graphic_type == "ch1":
-        print("hello")
-        #jsvsfjs
+        plt.xscale("log")
+        plt.plot(frequency, amplitude_1, "bo", ms=3)
+        plt.xlabel(header1[0])
+        plt.ylabel(header1[1])
+        plt.xlim(left=5)
+        plt.grid()
+        plt.show()
     elif graphic_type == "ch2":
-        print("hello")
+        plt.xscale("log")
+        plt.plot(frequency, amplitude_2, "go", ms=3)
+        plt.xlabel(header1[0])
+        plt.ylabel(header1[1])
+        plt.xlim(left=5)
+        plt.grid()
+        plt.show()
     else:
-        print("hello")
+        plt.xscale("log")
+        amp_plot_1 = plt.plot(frequency, amplitude_1, "bo", ms=2, label="Amplitude ch1")
+        amp_plot_2 = plt.plot(frequency, amplitude_2, "go", ms=2, label="Amplitude ch2")
+        plt.legend()
+        plt.xlabel(header1[0])
+        plt.ylabel(header1[1])
+        plt.xlim(left=5)
+        plt.grid()
+        plt.show()
 else:
     graphic_type = input("What's the desired graphic: T_dB, phase or both?")
     prep_data_T_dB()
